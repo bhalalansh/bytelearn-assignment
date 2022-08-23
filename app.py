@@ -15,7 +15,7 @@ def time_route():
     return f"{datetime.now()}"
 
 if __name__ == "__main__":
-    if os.environ.get("PROD").lower() == "true":
+    if f"{os.environ.get('PROD')}".lower() == "true":
         serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
     else:
         app.run(host="0.0.0.0",port=int(os.environ.get("PORT", 5000)), debug=True)
