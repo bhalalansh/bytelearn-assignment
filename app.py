@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import os
 import logging
 from datetime import datetime
@@ -13,12 +13,22 @@ metrics = PrometheusMetrics(app)
 metrics.info("flask_heroku_app", "an assignment for bytelearn", version="0.0.1")
 
 @app.route("/")
+@metrics.counter("root_counter", "A simple counter for the / endpoint")
 def home_route():
     return "hello world"
 
 @app.route("/time")
+@metrics.counter("time_counter", "A simple counter for the /time endpoint")
 def time_route():
     return f"{datetime.now()}"
+
+metrics.register_default(
+    metrics.counter(
+        'by_path_counter', 'Request count by request paths',
+        labels={'path': lambda : request.path}
+    )
+)
+
 
 if __name__ == "__main__":
     if f"{os.environ.get('PROD')}".lower() == "true":
